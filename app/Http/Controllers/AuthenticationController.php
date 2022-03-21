@@ -29,4 +29,10 @@ class AuthenticationController extends Controller
             "token" => $customer->createToken('authentication')->plainTextToken
         ]);
     }
+
+    public function logout(Request $request) {
+        $request->user()->currentAccessToken()->delete();
+
+        return jsonResponseSuccess();
+    }
 }
