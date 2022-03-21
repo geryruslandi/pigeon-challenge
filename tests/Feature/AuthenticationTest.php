@@ -46,4 +46,42 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(422);
         $response->assertSee('Provided Credentials are incorrect');
     }
+
+    /** @test */
+    public function cant_login_if_username_doesnt_exist()
+    {
+        Customer::factory()->create([
+            'username' => 'gery',
+            'password' => generatePassword('123123')
+        ]);
+
+        $response = $this->postJson('/api/login', [
+            "username" => "gerytest",
+            "password" => "123123"
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertSee('Provided Credentials are incorrect');
+    }
+
+    /** @test */
+    public function can_login_if_username_exist_and_password_match()
+    {
+        Customer::factory()->create([
+            'username' => 'gery',
+            'password' => generatePassword('123123')
+        ]);
+
+        $response = $this->postJson('/api/login', [
+            "username" => "gery",
+            "password" => "123123"
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            "data" => [
+                "token"
+            ]
+        ]);
+    }
 }

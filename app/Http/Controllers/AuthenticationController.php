@@ -26,7 +26,7 @@ class AuthenticationController extends Controller
         }
 
         return jsonResponse([
-            "token" => $customer->createToken('authentication')
+            "token" => $customer->createToken('authentication')->plainTextToken
         ]);
     }
 }
