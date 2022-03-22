@@ -1,64 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# About Project
+This project is using latest stable laravel version for now which is version 8.75.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+All of features that i used inside this project is fully using laravel framework supported packages.
+* For time manipulation, im using carbon.
+* For ORM im using Eloquent
+* For model transformer to be returned to response, im using laravel model resources
+* for Token Authentication, im using Laravel Sanctum
+* for request data validation, im using laravel build in validation
+* for unit test and feature test im using phpunit that come within this laravel framework too
 
-## About Laravel
+# Getting Started
+Steps to run this app on your local machine:
+* clone this repo
+* make sure you have latest php and composer version, this project tested with `php version 7.4.3` and `composer version 2.1.10`
+* create database for this project
+* copy .env.example to .env
+* put your db credential to newly created .env file
+* `composer install`
+* `php artisan migrate:fresh --seed`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+after those steps completed, you can test this app.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+I create a customer for <b>MANUAL</b> test purpose (inside CustomerSeeder).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+username: testing
+password: password
+```
 
-## Learning Laravel
+You can use above credential to test this app.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+But if you want to run `Automation TEST` that i made, you can run
+```
+php artisan test
+```
+> for now im using mysql as database driver for unit test, but the best database for test's performance sake is sqlite3
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+There is four endpoints that already made :
+* Login
+* Logout
+* Make Order
+* Finish Existing Order
 
-## Laravel Sponsors
+## Login ``(POST: /api/login)``
+required parameters:
+* username = `required|string`
+* password = `required|string`
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Error response :
+* standart laravel error message
 
-### Premium Partners
+Success response example:
+```
+{
+  "data": {
+    "token": "1|YSqJ6SrM2dDEItOjhyJrudhCa1lLRmz7WHlKtb8G"
+  }
+}
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+> This token need to be used as Bearer Token on Authorization header for each requests that need an authentication (logout, make order, finish order)
 
-## Contributing
+## Logout ``(POST: /api/logout)``
+> Bearer Token Needed
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Error response :
+* standart laravel error message
 
-## Code of Conduct
+Success response example:
+```
+{
+  "data": {
+    "message": "success"
+  }
+}
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Make Order ``(POST: /api/orders)``
+> Bearer Token Needed
 
-## Security Vulnerabilities
+required parameters:
+* distance = `required|numeric|min:1`
+* deadline = `required|date_format:d-m-Y H:i|after_or_equal:now (example '20-12-2021 15:45')`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Error response :
+* standart laravel error message
 
-## License
+Success response example:
+```
+{
+  "data": {
+    "order": {
+      "customer_id": 1,
+      "distance": 1,
+      "deadline": "2022-03-23T16:38:00.000000Z",
+      "assigned_pigeon_id": 1,
+      "finished_time": null,
+      "status": "on_going"
+    }
+  }
+}
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Finish Existing Order ``(POST: /api/orders/{orderId}/finish)``
+> Bearer Token Needed
+
+required parameters:
+* orderId = url parameter for selected order id, can only finish order that is belongs to logged in customer and order status should be `on_going`
+
+Error response :
+* standart laravel error message
+
+Success response example:
+```
+{
+  "data": {
+    "messsage": "success"
+  }
+}
+```
