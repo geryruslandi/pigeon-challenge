@@ -18,7 +18,9 @@ class PigeonFactory extends Factory
             "speed_per_hour" => $this->faker->numberBetween(45, 90),
             "maximum_range" => $this->faker->numberBetween(500, 1000),
             "cost_per_distance" => 2,
-            "downtime" => $this->faker->numberBetween(1, 5)
+            "downtime" => $this->faker->numberBetween(1, 5),
+            "order_cycle_count" => 0,
+            "previous_finished_order_time" => null
         ];
     }
 }

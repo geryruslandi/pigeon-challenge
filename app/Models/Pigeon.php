@@ -14,6 +14,12 @@ class Pigeon extends Model
         'speed_per_hour',
         'maximum_range',
         'cost_per_distance',
-        'downtime'
+        'downtime',
+        'order_cycle_count',
+        'previous_finished_order_time'
     ];
+
+    public function orders() {
+        return $this->hasMany(Order::class, 'assigned_pigeon_id');
+    }
 }

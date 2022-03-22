@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderResource;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -13,6 +16,10 @@ class OrderController extends Controller
             'deadline' => 'required|date_format:d-m-Y H:i|after_or_equal:now'
         ]);
 
-        return jsonResponseSuccess();
+        $order = (new OrderService($request->user()))->makeOrder($request->distance, Carbon::createFromFormat('d-m-Y H:i', $request->deadline));
+
+        return jsonResponse([
+            "order" => new OrderResource($order)
+        ]);
     }
 }
