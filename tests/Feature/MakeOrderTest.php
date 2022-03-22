@@ -95,4 +95,16 @@ class MakeOrderTest extends TestCase
         $response->assertStatus(422);
         $response->assertSeeText('The deadline must be a date after or equal to now');
     }
+
+    /** @test */
+    public function can_make_order_with_correct_deadline_and_distance() {
+        Sanctum::actingAs(Customer::factory()->create());
+
+        $response = $this->postJson(route('orders.store'), [
+            "distance" => "1",
+            "deadline" => now()->addDay()->format('d-m-Y H:i')
+        ]);
+
+        $response->assertSuccessful();
+    }
 }

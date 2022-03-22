@@ -12,5 +12,7 @@ class OrderController extends Controller
             'distance' => 'required|numeric|min:1',
             'deadline' => 'required|date_format:d-m-Y H:i|after_or_equal:now'
         ]);
+
+        return jsonResponseSuccess();
     }
 }
