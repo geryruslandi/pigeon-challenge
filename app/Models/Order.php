@@ -20,6 +20,7 @@ class Order extends Model
         'customer_id',
         'distance',
         'deadline',
+        'cost',
         'assigned_pigeon_id',
         'finished_time',
         'status'

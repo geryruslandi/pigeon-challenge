@@ -52,6 +52,7 @@ class OrderService {
         $order = Order::create([
             'customer_id' => $customer->id,
             'distance' => $distance,
+            'cost' => $distance * $fastestPigeon->cost_per_distance,
             'deadline' => $deadline,
             'assigned_pigeon_id' => $fastestPigeon->id,
             'status' => Order::STATUS_ON_GOING

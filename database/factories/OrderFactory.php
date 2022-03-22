@@ -22,6 +22,7 @@ class OrderFactory extends Factory
             "deadline" => $this->faker->dateTimeBetween('now', '+01 months'),
             "assigned_pigeon_id" => null,
             "finished_time" => null,
+            "cost" => $this->faker->numberBetween(500, 1000) * 2,
             "status" => Order::STATUS_PENDING
         ];
     }

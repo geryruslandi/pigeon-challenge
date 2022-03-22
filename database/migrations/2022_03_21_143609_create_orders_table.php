@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('customer_id');
             $table->integer('distance');
             $table->dateTime('deadline');
+            $table->integer('cost');
             $table->unsignedBigInteger('assigned_pigeon_id')->nullable();
             $table->dateTime('finished_time')->nullable();
             $table->string('status')->default('pending');
