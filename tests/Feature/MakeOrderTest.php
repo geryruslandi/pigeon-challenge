@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Models\Pigeon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Carbon;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -99,6 +99,7 @@ class MakeOrderTest extends TestCase
     /** @test */
     public function can_make_order_with_correct_deadline_and_distance() {
         Sanctum::actingAs(Customer::factory()->create());
+        Pigeon::factory()->create();
 
         $response = $this->postJson(route('orders.store'), [
             "distance" => "1",

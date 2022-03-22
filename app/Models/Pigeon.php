@@ -19,6 +19,10 @@ class Pigeon extends Model
         'previous_finished_order_time'
     ];
 
+    protected $casts = [
+        'previous_finished_order_time' => 'date',
+    ];
+
     public function orders() {
         return $this->hasMany(Order::class, 'assigned_pigeon_id');
     }

@@ -10,11 +10,25 @@ use Illuminate\Validation\ValidationException;
 
 class OrderService {
 
-    private $customer;
+    private Order $order;
 
-    function __construct(Customer $customer)
+    function __construct(Order $order)
     {
-        $this->customer = $customer;
+        $this->order = $order;
+    }
+
+    public function markAsFinished()
+    {
+        $this->order->status = Order::STATUS_FINISHED;
+        $this->order->finished_time = now();
+        $this->order->save();
+
+        $assignedPigeon = $this->order->assignedPigeon;
+        $assignedPigeon->order_cycle_count = $assignedPigeon->order_cycle_count >= 2 ? 0 : $assignedPigeon->order_cycle_count + 1;
+        $assignedPigeon->previous_finished_order_time = now();
+        $assignedPigeon->save();
+
+        //TODO dispatch invoice email
     }
 
     /**
@@ -25,9 +39,9 @@ class OrderService {
      * @param  mixed $deadline
      * @return void
      */
-    public function makeOrder(int $distance, Carbon $deadline)
+    public static function makeOrder(Customer $customer, int $distance, Carbon $deadline)
     {
-        $fastestPigeon = $this->getFastestAvailablePigeon($distance, $deadline);
+        $fastestPigeon = self::getFastestAvailablePigeon($distance, $deadline);
 
         if(!$fastestPigeon){
             throw ValidationException::withMessages([
@@ -36,7 +50,7 @@ class OrderService {
         }
 
         $order = Order::create([
-            'customer_id' => $this->customer->id,
+            'customer_id' => $customer->id,
             'distance' => $distance,
             'deadline' => $deadline,
             'assigned_pigeon_id' => $fastestPigeon->id
@@ -45,7 +59,7 @@ class OrderService {
         return $order;
     }
 
-    private function getFastestAvailablePigeon(int $distance, Carbon $deadline)
+    private static function getFastestAvailablePigeon(int $distance, Carbon $deadline)
     {
         $deadlineInHours = now()->diffInHours($deadline);
         $minimumSpeed = $distance / $deadlineInHours;
@@ -54,15 +68,15 @@ class OrderService {
                 ->where('speed_per_hour', '>=', $minimumSpeed)
                 ->where(function($query) {
                     // where pigeon is not delivering
-                    $query->doestHave('order', function($query) {
+                    $query->whereDoesntHave('orders', function($query) {
                             $query->where('status', Order::STATUS_ON_GOING);
                         })
                         ->where(function($query) {
                             // where is not the time for rest
-                            $query->whereRaw('order_cycle', '<', 2);
+                            $query->where('order_cycle_count', '<', 2);
                             // where is time for rest and already take enough rest
                             $query->orWhere(function($query) {
-                                $query->where('order_cycle', '>=', 2)
+                                $query->where('order_cycle_count', '>=', 2)
                                     ->whereRaw("previous_finished_order_time <= DATE_SUB(now(), INTERVAL downtime HOUR)");
                             });
                         });

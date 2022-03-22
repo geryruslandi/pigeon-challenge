@@ -16,7 +16,7 @@ class OrderController extends Controller
             'deadline' => 'required|date_format:d-m-Y H:i|after_or_equal:now'
         ]);
 
-        $order = (new OrderService($request->user()))->makeOrder($request->distance, Carbon::createFromFormat('d-m-Y H:i', $request->deadline));
+        $order = OrderService::makeOrder($request->user(), $request->distance, Carbon::createFromFormat('d-m-Y H:i', $request->deadline));
 
         return jsonResponse([
             "order" => new OrderResource($order)
