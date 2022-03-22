@@ -36,6 +36,19 @@ php artisan test
 ```
 > for now im using mysql as database driver for unit test, but the best database for test's performance sake is sqlite3
 
+<br>
+
+___
+### <b>IMPORTANT NOTE!!</b>
+TO MAKE YOUR REQUEST ACCEPTED AS AJAX AND ABLE TO RECEIVE JSON AS RESPONSE, YOU NEED TO PUT THIS TWO HEADERS TO EACH OF YOUR REQUEST
+```
+Content-Type: application/json
+Accept: application/json
+```
+___
+
+<br>
+
 There is four endpoints that already made :
 * Login
 * Logout
@@ -91,6 +104,7 @@ Success response example:
 {
   "data": {
     "order": {
+      "id": 1,
       "customer_id": 1,
       "distance": 1,
       "deadline": "2022-03-23T16:38:00.000000Z",

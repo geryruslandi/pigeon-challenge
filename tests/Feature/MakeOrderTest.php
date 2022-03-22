@@ -15,6 +15,8 @@ class MakeOrderTest extends TestCase
     public function need_to_login_to_make_an_order() {
         $response = $this->postJson(route('orders.store'));
 
+        $response->dd();
+
         $response->assertStatus(401);
     }
 
