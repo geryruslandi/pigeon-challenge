@@ -37,7 +37,7 @@ class OrderService {
      *
      * @param  mixed $distance
      * @param  mixed $deadline
-     * @return void
+     * @return Customer
      */
     public static function makeOrder(Customer $customer, int $distance, Carbon $deadline)
     {
