@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,8 +22,12 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::post('/logout')->uses([AuthenticationController::class, 'logout'])->name('logout');
 
-});
+    Route::controller(OrderController::class)
+        ->prefix('orders')
+        ->name('orders.')
+        ->group(function() {
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+            Route::post('/', 'store')->name('store');
+
+        });
 });
