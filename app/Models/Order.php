@@ -27,8 +27,8 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'deadline' => 'date',
-        'finished_time' => 'date',
+        'deadline' => 'datetime',
+        'finished_time' => 'datetime',
     ];
 
     public function assignedPigeon()

@@ -20,7 +20,7 @@ class Pigeon extends Model
     ];
 
     protected $casts = [
-        'previous_finished_order_time' => 'date',
+        'previous_finished_order_time' => 'datetime',
     ];
 
     public function orders() {

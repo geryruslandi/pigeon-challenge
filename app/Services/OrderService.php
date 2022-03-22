@@ -24,7 +24,7 @@ class OrderService {
         $this->order->save();
 
         $assignedPigeon = $this->order->assignedPigeon;
-        $assignedPigeon->order_cycle_count = $assignedPigeon->order_cycle_count >= 2 ? 0 : $assignedPigeon->order_cycle_count + 1;
+        $assignedPigeon->order_cycle_count = $assignedPigeon->order_cycle_count >= Order::CYCLE_COUNT_NEEDED_TO_TAKE_A_REST ? 0 : $assignedPigeon->order_cycle_count + 1;
         $assignedPigeon->previous_finished_order_time = now();
         $assignedPigeon->save();
 
