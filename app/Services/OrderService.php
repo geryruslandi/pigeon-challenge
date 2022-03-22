@@ -28,7 +28,7 @@ class OrderService {
         $assignedPigeon->previous_finished_order_time = now();
         $assignedPigeon->save();
 
-        //TODO dispatch invoice email
+        //TODO dispatch invoice email with order detail and its cost
     }
 
     /**

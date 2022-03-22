@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function() {
         ->group(function() {
 
             Route::post('/', 'store')->name('store');
+            Route::post('/{orderId}/finish', 'finish')->name('finish');
 
         });
 });

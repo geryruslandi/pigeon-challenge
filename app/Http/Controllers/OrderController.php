@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\OrderResource;
+use App\Models\Order;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -21,5 +21,18 @@ class OrderController extends Controller
         return jsonResponse([
             "order" => new OrderResource($order)
         ]);
+    }
+
+    public function finish(Request $request, $orderId) {
+
+        /** @var Order */
+        $order = Order::where('status', Order::STATUS_ON_GOING)
+            ->where('customer_id', $request->user()->id)
+            ->where('id', $orderId)
+            ->firstOrFail();
+
+        $order->markAsFinished();
+
+        return jsonResponseSuccess();
     }
 }
