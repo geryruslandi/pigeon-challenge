@@ -23,4 +23,15 @@ class PigeonFactory extends Factory
             "previous_finished_order_time" => null
         ];
     }
+
+    public function resting()
+    {
+        return $this->state(function(array $attribute){
+            return [
+                "order_cycle_count" => 2,
+                "previous_finished_order_time" => now(),
+                "downtime" => 1
+            ];
+        });
+    }
 }

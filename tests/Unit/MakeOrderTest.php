@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Customer;
+use App\Models\Order;
 use App\Models\Pigeon;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -45,5 +46,62 @@ class MakeOrderTest extends TestCase
 
         $this->expectException(ValidationException::class);
         OrderService::makeOrder($customer, 300, now()->addDays(5));
+    }
+
+    /** @test */
+    function cant_create_order_if_all_pigeons_still_delivering()
+    {
+        $customer = Customer::factory()->create();
+        Order::factory()->count(5)->onGoing()->create();
+
+        $this->expectException(ValidationException::class);
+        OrderService::makeOrder($customer, 300, now()->addDays(5));
+    }
+
+    /** @test */
+    function cant_create_order_if_all_available_pigeons_is_still_resting()
+    {
+        $customer = Customer::factory()->create();
+        $pigeon = Pigeon::factory()->resting()->create([
+            "previous_finished_order_time" => now()->subHour(),
+            "downtime" => 2
+        ]);
+        Order::factory()->finished()->create([
+            "assigned_pigeon_id" => $pigeon->id
+        ]);
+
+        $this->expectException(ValidationException::class);
+        OrderService::makeOrder($customer, 300, now()->addDays(5));
+    }
+
+    /** @test */
+    function can_create_order_if_pigeons_is_available_and_dosnt_need_to_take_a_rest()
+    {
+        $customer = Customer::factory()->create();
+        $pigeon = Pigeon::factory()->create();
+        Order::factory()->finished()->create([
+            "assigned_pigeon_id" => $pigeon->id
+        ]);
+
+        $order = OrderService::makeOrder($customer, 300, now()->addDays(5));
+
+        $this->assertEquals($order->assigned_pigeon_id, $pigeon->id);
+    }
+
+    /** @test */
+    function can_create_order_if_pigeons_is_available_and_finished_resting()
+    {
+        $customer = Customer::factory()->create();
+        $pigeon = Pigeon::factory()->resting()->create([
+            "previous_finished_order_time" => now()->subHours(5),
+            "downtime" => 2
+        ]);
+        Order::factory()->finished()->create([
+            "assigned_pigeon_id" => $pigeon->id
+        ]);
+
+        $order = OrderService::makeOrder($customer, 300, now()->addDays(5));
+
+        $this->assertEquals($order->assigned_pigeon_id, $pigeon->id);
     }
 }

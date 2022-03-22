@@ -53,7 +53,8 @@ class OrderService {
             'customer_id' => $customer->id,
             'distance' => $distance,
             'deadline' => $deadline,
-            'assigned_pigeon_id' => $fastestPigeon->id
+            'assigned_pigeon_id' => $fastestPigeon->id,
+            'status' => Order::STATUS_ON_GOING
         ]);
 
         return $order;
@@ -73,11 +74,11 @@ class OrderService {
                         })
                         ->where(function($query) {
                             // where is not the time for rest
-                            $query->where('order_cycle_count', '<', 2);
+                            $query->where('order_cycle_count', '<', Order::CYCLE_COUNT_NEEDED_TO_TAKE_A_REST);
                             // where is time for rest and already take enough rest
                             $query->orWhere(function($query) {
-                                $query->where('order_cycle_count', '>=', 2)
-                                    ->whereRaw("previous_finished_order_time <= DATE_SUB(now(), INTERVAL downtime HOUR)");
+                                $query->where('order_cycle_count', '>=', Order::CYCLE_COUNT_NEEDED_TO_TAKE_A_REST)
+                                    ->whereRaw("DATE_ADD(previous_finished_order_time, INTERVAL downtime HOUR) <= now()");
                             });
                         });
 

@@ -14,6 +14,8 @@ class Order extends Model
     const STATUS_ON_GOING = 'on_going';
     const STATUS_FINISHED = 'finished';
 
+    const CYCLE_COUNT_NEEDED_TO_TAKE_A_REST = 2;
+
     protected $fillable = [
         'customer_id',
         'distance',
